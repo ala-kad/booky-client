@@ -10,6 +10,7 @@ import Profile from "./views/Profile";
 import ExternalApi from "./views/ExternalApi";
 import { useAuth0 } from "@auth0/auth0-react";
 import history from "./utils/history";
+import Demo from "./components/Demo";
 
 // styles
 import "./App.css";
@@ -39,6 +40,7 @@ const App = () => {
             <Route path="/profile" component={Profile} />
             <Route path="/external-api" component={ExternalApi} />
           </Switch>
+          <Demo />
         </Container>
         <Footer />
       </div>
