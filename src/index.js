@@ -7,6 +7,12 @@ import { Auth0Provider } from "@auth0/auth0-react";
 import history from "./utils/history";
 import { getConfig } from "./config";
 import { Provider } from "./components/ui/provider"
+import { ApolloClient, ApolloProvider, InMemoryCache} from "@apollo/client"
+
+const client = new ApolloClient({
+  uri: 'http://localhost:8000/graphql',
+  cache: new InMemoryCache()
+})
 
 const onRedirectCallback = (appState) => {
   history.push(
@@ -33,9 +39,11 @@ root.render(
   <Auth0Provider
     {...providerConfig}
   >
-    <Provider>
-      <App />
-    </Provider>
+    <ApolloProvider client={client}>
+      <Provider>
+        <App />
+      </Provider>
+    </ApolloProvider>
   </Auth0Provider>,
 );
 
