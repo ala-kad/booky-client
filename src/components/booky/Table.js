@@ -1,6 +1,6 @@
 
 
-import { HStack, Button, Stack, Table } from "@chakra-ui/react";
+import { HStack, Stack, Table } from "@chakra-ui/react";
 import DeleteDialogComponent from "./Delete";
 
 import {
@@ -19,7 +19,7 @@ const TableComponent = () => {
     {books {id name description }}
   `;
 
-  const { data, loading, error } = useQuery(BOOKS_QUERY);
+  const { data, loading, error, refetch } = useQuery(BOOKS_QUERY);
 
  if (loading) return <p>Loading...</p>;
  if (error) return <p>Error: {error.message}</p>;
@@ -32,6 +32,7 @@ const TableComponent = () => {
           <Table.Row>
             <Table.ColumnHeader>Name</Table.ColumnHeader>
             <Table.ColumnHeader>Description</Table.ColumnHeader>
+            <Table.ColumnHeader>Actions</Table.ColumnHeader>
           </Table.Row>
         </Table.Header>
         <Table.Body>
@@ -39,7 +40,7 @@ const TableComponent = () => {
             <Table.Row key={book?.id}>
               <Table.Cell>{book?.name}</Table.Cell>
               <Table.Cell>{book?.description}</Table.Cell>
-              <DeleteDialogComponent />
+              <DeleteDialogComponent bookId={book.id} refetch={refetch} />
             </Table.Row>
           ))}
         </Table.Body>
