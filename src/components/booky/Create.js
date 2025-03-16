@@ -1,14 +1,11 @@
 import React, {useState} from 'react';
 import { Button, Dialog, Field, Input, Portal, Stack } from "@chakra-ui/react";
 import { RiAddFill } from "react-icons/ri";
-import { useMutation, gql } from "@apollo/client";
+import { useMutation, gql, useApolloClient } from "@apollo/client";
 
 const CREATE_BOOK_MUTATION = gql`
-	mutation createBook(
-		$name: String!
-		$description: String!
-	) {
-		createBook(createBookInput: { name: $name, description: $description }) {
+	mutation createBook($createBookInput: CreateBookInput) {
+		createBook(createBookInput: $createBookInput) {
 			id 
 			name 
 			description
@@ -16,35 +13,60 @@ const CREATE_BOOK_MUTATION = gql`
 	}
 `;
 
+const BOOKS_QUERY = gql`
+  {books {id name description }}
+`;
+
 const CreateBookComponent = () => { 
 	const [inputs, setInputs] = useState({});
+  const client = useApolloClient();
 
-	const [formState, setFormState] = useState({
-		name: '',
-		description: ''
-	});
-
-	const [createBook, {data, loading, error, reset}] = useMutation(CREATE_BOOK_MUTATION, {
-		refetchQueries: ['BOOKS_QUERY'],
-	});
-
+	const [createBook] = useMutation(CREATE_BOOK_MUTATION, {
+    update(cache, { data: { createBook } }) {
+      try {
+        const existingBooks = cache.readQuery({ query: BOOKS_QUERY });
+        if (existingBooks) {
+          cache.writeQuery({
+            query: BOOKS_QUERY,
+            data: { books: [...existingBooks.books, createBook] },
+          });
+        }
+      } catch (err) {
+        console.error("Error updating cache:", err);
+      }
+    },
+  });
 	
+	// Detects form inputs values change 
 	const handleChange = (event) => {
-		const { name, value } = event.target;
-    	setFormState((prev) => ({ ...prev, [name]: value }));
+		const name = event.target.name;
+		const value = event.target.value;
+		setInputs(values => ({...values, [name]: value}));
 	}
-
+	// Handles form submit event
 	const handleSubmit = async (event) => {
 		event.preventDefault();
 		try {
 			await createBook({
-				variables: { name: formState.name, description: formState.description }
+				variables: {
+				  createBookInput: {
+					name: inputs.name,
+					description: inputs.description
+				  }
+				},
+				onCompleted: () => {
+					alert('Success')
+				},
+				onError: (err) => {
+					alert(err.message);
+				}
 			});
+      await client.refetchQueries({ include: ["BOOKS_QUERY"] });
 		} catch (err) { 
 			console.error("Error creating book:", err);
 		}
 	};
-
+	// Handle reset form event
 	const handleReset = () => {
 		setInputs({name: '', description: ''});
 	}
@@ -73,7 +95,7 @@ const CreateBookComponent = () => {
 												type='text'
 												name="name"
 												placeholder='Enter book name'
-												value={formState.name} 
+												value={inputs.name || ''} 
 												onChange={handleChange} 
 											/>
 										</Field.Root>
@@ -83,11 +105,11 @@ const CreateBookComponent = () => {
 												type='text'
 												name="description"
 												placeholder='Enter book description'
-												value={formState.description} 
+												value={inputs.description || ''} 
 												onChange={handleChange}
 											/>
 										</Field.Root>
-										<Button type="submit" isLoading={loading}>Submit</Button>
+										<Button type="submit" >Submit</Button>
 										<Button type='reset' onClick={ handleReset }>Reset</Button>
                    
 									</Stack>
