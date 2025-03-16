@@ -19,7 +19,7 @@ const BOOKS_QUERY = gql`
 
 const CreateBookComponent = () => { 
 	const [inputs, setInputs] = useState({});
-  const client = useApolloClient();
+  	const client = useApolloClient();
 
 	const [createBook] = useMutation(CREATE_BOOK_MUTATION, {
     update(cache, { data: { createBook } }) {
