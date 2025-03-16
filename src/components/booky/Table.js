@@ -1,6 +1,7 @@
 
 
 import { HStack, Stack, Table } from "@chakra-ui/react";
+import EditBookComponent from "./Edit";
 import DeleteDialogComponent from "./Delete";
 
 import {
@@ -32,7 +33,7 @@ const TableComponent = () => {
           <Table.Row>
             <Table.ColumnHeader>Name</Table.ColumnHeader>
             <Table.ColumnHeader>Description</Table.ColumnHeader>
-            <Table.ColumnHeader>Actions</Table.ColumnHeader>
+            <Table.ColumnHeader colSpan={2}>Actions</Table.ColumnHeader>
           </Table.Row>
         </Table.Header>
         <Table.Body>
@@ -40,7 +41,12 @@ const TableComponent = () => {
             <Table.Row key={book?.id}>
               <Table.Cell>{book?.name}</Table.Cell>
               <Table.Cell>{book?.description}</Table.Cell>
-              <DeleteDialogComponent bookId={book.id} refetch={refetch} />
+              <Table.Cell> 
+                <EditBookComponent book={book} />
+              </Table.Cell>
+              <Table.Cell> 
+                <DeleteDialogComponent bookId={book.id} refetch={refetch} />
+              </Table.Cell>
             </Table.Row>
           ))}
         </Table.Body>
