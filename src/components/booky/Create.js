@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { Button, Dialog, Field, Input, Portal, Stack } from "@chakra-ui/react";
+import { Button, Dialog, Field, Input, Portal, HStack, Stack} from "@chakra-ui/react";
 import { RiAddFill } from "react-icons/ri";
 import { useMutation, gql, useApolloClient } from "@apollo/client";
 
@@ -21,7 +21,7 @@ const CreateBookComponent = () => {
 	const [inputs, setInputs] = useState({});
   	const client = useApolloClient();
 
-	const [createBook] = useMutation(CREATE_BOOK_MUTATION, {
+	const [createBook, {loading }] = useMutation(CREATE_BOOK_MUTATION, {
     update(cache, { data: { createBook } }) {
       try {
         const existingBooks = cache.readQuery({ query: BOOKS_QUERY });
@@ -32,7 +32,7 @@ const CreateBookComponent = () => {
           });
         }
       } catch (err) {
-        console.error("Error updating cache:", err);
+        alert("Error updating cache:", err);
       }
     },
   });
@@ -73,9 +73,9 @@ const CreateBookComponent = () => {
 	
 	return(
 		<>
-			<Dialog.Root colorPaltte='green' >
+			<Dialog.Root colorPaltte='green'>
 				<Dialog.Trigger asChild>
-					<Button variant="outline" colorPalette="green" >
+					<Button variant="outline" colorPalette="green" alignSelf="end">
 					<RiAddFill /> Create new book
 					</Button>
 				</Dialog.Trigger>
@@ -109,15 +109,16 @@ const CreateBookComponent = () => {
 												onChange={handleChange}
 											/>
 										</Field.Root>
-										<Button type="submit" >Submit</Button>
-										<Button type='reset' onClick={ handleReset }>Reset</Button>
-                   
+                    <HStack gap="2" alignSelf="end">
+                      <Button type="submit" loading={loading} variant="outline" colorPalette="green">Submit</Button>
+                      <Button type='reset' onClick={ handleReset } variant="outline">Reset</Button>
+                    </HStack>
 									</Stack>
 								</form>
 							</Dialog.Body>
 							<Dialog.Footer>
 								<Dialog.ActionTrigger asChild>
-									<Button variant="outline" >Close</Button>
+									<Button variant="outline" colorPalette="red">Close</Button>
 								</Dialog.ActionTrigger>
 							</Dialog.Footer>
 						</Dialog.Content>
