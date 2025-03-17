@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Dialog, Field, Input, Portal, Stack } from "@chakra-ui/react";
+import { Button, Dialog, Field, Input, Portal, Stack, HStack } from "@chakra-ui/react";
 import { RiEditFill } from "react-icons/ri";
 import { useMutation, useQuery, gql } from "@apollo/client";
 
@@ -90,7 +90,7 @@ const EditBookComponent = ({ book }) => {
         },
       });
     } catch (err) {
-      console.error("Error updating book:", err);
+      alert("Error updating book:", err);
     }
   };
 
@@ -145,14 +145,16 @@ const EditBookComponent = ({ book }) => {
                         onChange={handleChange}
                       />
                     </Field.Root>
-                    <Button type="submit">Update</Button>
-                    <Button type="reset" onClick={handleReset}>Reset</Button>
+                    <HStack alignSelf='end'>
+                      <Button type="submit" variant='outline' colorPalette='green' loading={loading}>Update</Button>
+                      <Button type="reset" onClick={handleReset} variant='outline'>Reset</Button>
+                    </HStack>
                   </Stack>
                 </form>
               </Dialog.Body>
               <Dialog.Footer>
                 <Dialog.ActionTrigger asChild>
-                  <Button variant="outline">Close</Button>
+                  <Button variant="outline" colorPalette='red'>Close</Button>
                 </Dialog.ActionTrigger>
               </Dialog.Footer>
             </Dialog.Content>
