@@ -1,14 +1,20 @@
 import React from "react";
-import TableComponent from '../components/booky/Table';
+import { Stack } from "@chakra-ui/react";
+// Components
+import ListBooksComponent from '../components/booky/List';
 import CreateBookComponent from '../components/booky/Create';
 
 export const BookyApiComponent = () => {
 
   return (
     <>
+
       <h2>Book List</h2>
-      <CreateBookComponent />
-      <TableComponent />
+      <Stack wrap="wrap" gap="5" align="center" justify="center">
+        <CreateBookComponent />
+        <ListBooksComponent />
+      </Stack>
+     
     </>
   );
 }
