@@ -1,4 +1,5 @@
-import { Button, CloseButton, Dialog, Portal, HStack } from "@chakra-ui/react";
+import { Button, CloseButton, Dialog, Portal, Stack } from "@chakra-ui/react";
+import { RiDeleteBinFill } from "react-icons/ri";
 import { useMutation, gql } from "@apollo/client";
 import { useState } from "react";
 
@@ -10,17 +11,16 @@ const DeleteDialogComponent = ({ bookId, refetch }) => {
 
   const [isOpen, setIsOpen] = useState(false);
 
-  const [deleteBook]  = useMutation(DELETE_MUTATION, {
+  const [deleteBook, {loading}]  = useMutation(DELETE_MUTATION, {
     onCompleted: () => {
       refetch();
       closeDialog();
     },
     onError: (error) => {
-      console.error('Error deleting book', error);
+      alert('Error deleting book', error);
     }
   });
 
-  const openDialog = () => setIsOpen(true);
   const closeDialog = () => setIsOpen(false);
 
   const handleDelete = () => {
@@ -28,11 +28,11 @@ const DeleteDialogComponent = ({ bookId, refetch }) => {
   };
 
   return (
-    <HStack wrap="wrap" gap="4">
+    <Stack width="full" gap="4">
       <Dialog.Root isOpen={isOpen} onClose={closeDialog} role="alertdialog" placement="center" trapFocus={false}>
         <Dialog.Trigger asChild >
           <Button colorPalette='red' variant="outline">
-            Delete
+            <RiDeleteBinFill /> Delete book
           </Button>
         </Dialog.Trigger>
         <Portal>
@@ -52,17 +52,19 @@ const DeleteDialogComponent = ({ bookId, refetch }) => {
                 <Dialog.ActionTrigger asChild>
                   <Button variant="outline" onClick={closeDialog}>Cancel</Button>
                 </Dialog.ActionTrigger>
-                <Button colorPalette="red" onClick={handleDelete}>Delete</Button>
+                <Button variant="outline" colorPalette="red" onClick={handleDelete} loading={loading}>Delete</Button>
               </Dialog.Footer>
               <Dialog.CloseTrigger asChild>
-                <CloseButton size="sm" />
+                <CloseButton colorPalette='red' variant='outline'/>
               </Dialog.CloseTrigger>
             </Dialog.Content>
           </Dialog.Positioner>
         </Portal>
       </Dialog.Root>
-    </HStack>
-  )
+    </Stack>
+
+
+)
 }
 
 export default DeleteDialogComponent;
