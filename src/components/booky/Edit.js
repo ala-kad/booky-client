@@ -1,8 +1,10 @@
 // Hooks
 import React, { useState, useEffect } from 'react';
-import { useMutation, useQuery } from "@apollo/client";
+import { useLazyQuery, useMutation } from "@apollo/client";
 // Components
-import { Button, Dialog, Field, Input, Portal, Stack, HStack } from "@chakra-ui/react";
+import AlerSuccessComponent from './AlertSucess';
+import AlerErrorComponent from './AlertError';
+import { Button, Dialog, Field, Input, Portal, Stack, HStack, Spinner } from "@chakra-ui/react";
 import { RiEditFill } from "react-icons/ri";
 // Queries & Mutations
 import { UPDATE_BOOK_MUTATION } from '../../utils/Mutations';
@@ -14,12 +16,12 @@ const EditBookComponent = ({ book }) => {
     name: '',
     description: ''
   });
+  const [showAlert, setShowAlert] = useState(false);
+
+  const [isOpen, setIsOpen] = useState(false);
 
   // Query Book Details
-  const { data, loading, error } = useQuery(BOOK_QUERY, {
-    variables: { id: book.id },
-    skip: !book.id
-  });
+  const  [fetchBookDetails, { data, loading, error }] = useLazyQuery(BOOK_QUERY);
 
   // Update state when data is loaded
   useEffect(() => {
@@ -32,7 +34,7 @@ const EditBookComponent = ({ book }) => {
   }, [data]);
 
   // Mutation Hook: Update Book
-  const [updateBook] = useMutation(UPDATE_BOOK_MUTATION, {
+  const [updateBook, { loading: updating, error: updateError, data: updateData }] = useMutation(UPDATE_BOOK_MUTATION, {
     update(cache, { data: { updateBook } }) {
       cache.modify({
         fields: {
@@ -48,8 +50,6 @@ const EditBookComponent = ({ book }) => {
         },
       });
     },
-    onCompleted: () => alert("Book updated successfully!"),
-    onError: (err) => alert(`Error: ${err.message}`),
   });
 
   // Handle Input Change
@@ -72,8 +72,9 @@ const EditBookComponent = ({ book }) => {
           },
         },
       });
+      setShowAlert(true); // Show success alert
     } catch (err) {
-      alert("Error updating book:", err);
+      console.log("Error updating book:", err);
     }
   };
 
@@ -87,12 +88,21 @@ const EditBookComponent = ({ book }) => {
     }
   };
 
-  if (loading) return <p>Loading book details...</p>;
-  if (error) return <p>Error loading book: {error.message}</p>;
+  const handleOpen = () => {
+    setIsOpen(true);
+    fetchBookDetails({ variables: { id: book.id } });
+  };
+
+  const handleClose = () => { 
+    setIsOpen(false);
+  }
+
+  if (loading) return <Spinner />;
+  if (error) return <p>Error loading book:</p>;
 
   return (
     <>
-      <Dialog.Root>
+      <Dialog.Root placement='center' open={isOpen} onOpenChange={handleOpen}>
         <Dialog.Trigger asChild>
           <Button variant="outline">
             <RiEditFill /> Edit Book
@@ -101,10 +111,18 @@ const EditBookComponent = ({ book }) => {
         <Portal>
           <Dialog.Backdrop />
           <Dialog.Positioner>
-            <Dialog.Content>
+            <Dialog.Content position="relative" maxW="500px">
               <Dialog.Header>
                 <Dialog.Title>Edit Book</Dialog.Title>
               </Dialog.Header>
+              {/* Alert Update Success */}
+              { showAlert && updateData && (
+                <AlerSuccessComponent showAlert={showAlert} setShowAlert={setShowAlert}/>
+              )}
+              {/* Alert Update Error */}
+              { showAlert && updateError && (
+                <AlerErrorComponent  showAlert={showAlert} setShowAlert={setShowAlert}/>
+              )} 
               <Dialog.Body pb="4">
                 <form onSubmit={handleSubmit}>
                   <Stack gap="4">
@@ -129,7 +147,7 @@ const EditBookComponent = ({ book }) => {
                       />
                     </Field.Root>
                     <HStack alignSelf='end'>
-                      <Button type="submit" variant='outline' colorPalette='green' loading={loading}>Update</Button>
+                      <Button type="submit" variant='outline' colorPalette='green' loading={updating}>Update</Button>
                       <Button type="reset" onClick={handleReset} variant='outline'>Reset</Button>
                     </HStack>
                   </Stack>
@@ -142,7 +160,7 @@ const EditBookComponent = ({ book }) => {
               </Dialog.Footer>
             </Dialog.Content>
           </Dialog.Positioner>
-        </Portal>
+        </Portal>       
       </Dialog.Root>
     </>
   );
