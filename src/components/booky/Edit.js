@@ -1,40 +1,24 @@
+// Hooks
 import React, { useState, useEffect } from 'react';
+import { useMutation, useQuery } from "@apollo/client";
+// Components
 import { Button, Dialog, Field, Input, Portal, Stack, HStack } from "@chakra-ui/react";
 import { RiEditFill } from "react-icons/ri";
-import { useMutation, useQuery, gql } from "@apollo/client";
-
-// GraphQL Query: Fetch Book Details
-const BOOK_QUERY = gql`
-  query book($id: Int!) {
-    book(id: $id) {
-      id
-      name
-      description
-    }
-  }
-`;
-
-// GraphQL Mutation: Update Book
-const UPDATE_BOOK_MUTATION = gql`
-  mutation updateBook($updateBookInput: UpdateBookInput!) {
-    updateBook(updateBookInput: $updateBookInput) {
-      id
-      name
-      description
-    }
-  }
-`;
+// Queries & Mutations
+import { UPDATE_BOOK_MUTATION } from '../../utils/Mutations';
+import { BOOK_QUERY } from '../../utils/Queries';
 
 const EditBookComponent = ({ book }) => {
-  const { data, loading, error } = useQuery(BOOK_QUERY, {
-    variables: { id: book.id },
-    skip: !book.id, // Skip query if bookId is not provided
-  });
-
   // Initialize inputs state with default values for name and description
   const [inputs, setInputs] = useState({
     name: '',
     description: ''
+  });
+
+  // Query Book Details
+  const { data, loading, error } = useQuery(BOOK_QUERY, {
+    variables: { id: book.id },
+    skip: !book.id
   });
 
   // Update state when data is loaded
@@ -67,7 +51,6 @@ const EditBookComponent = ({ book }) => {
     onCompleted: () => alert("Book updated successfully!"),
     onError: (err) => alert(`Error: ${err.message}`),
   });
-
 
   // Handle Input Change
   const handleChange = (event) => {

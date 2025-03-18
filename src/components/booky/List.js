@@ -1,23 +1,15 @@
-import { Stack, Table, IconButton, ButtonGroup, Pagination } from "@chakra-ui/react";
-import { useQuery, gql } from "@apollo/client";
-import { LuChevronLeft, LuChevronRight } from "react-icons/lu"
+import { useQuery } from "@apollo/client";
 // Components
 import EditBookComponent from "./Edit";
 import DeleteDialogComponent from "./Delete";
-import {
-  PaginationItems,
-  PaginationRoot,
-} from "../ui/pagination"; // Pagination CHAKR-UI COMPONENT
-
-
-const BOOKS_QUERY = gql`
-  {books {id name description }}
-`;
+import { Stack, Table, IconButton, ButtonGroup, Pagination } from "@chakra-ui/react";
+import { PaginationItems, PaginationRoot } from "../ui/pagination";
+import { LuChevronLeft, LuChevronRight } from "react-icons/lu"
+// Queries & Mutations
+import { BOOKS_QUERY } from '../../utils/Queries';
 
 const ListBooksComponent = () => {
-
   const { data, loading, error, refetch } = useQuery(BOOKS_QUERY);
-
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
 
@@ -46,22 +38,22 @@ const ListBooksComponent = () => {
           ))}
         </Table.Body>
       </Table.Root>
-
-      <PaginationRoot count={data.books.length } pageSize={3} defaultPage={1}>
-      <ButtonGroup variant="ghost" size="sm" wrap="wrap">
-        <Pagination.PrevTrigger asChild>
+      {/* Pagination component */}
+      <PaginationRoot count={data.books.length} pageSize={3} defaultPage={1}>
+        <ButtonGroup variant="ghost" size="sm" wrap="wrap">
+          <Pagination.PrevTrigger asChild>
             <IconButton>
               <LuChevronLeft />
             </IconButton>
           </Pagination.PrevTrigger>
-          <PaginationItems 
+          <PaginationItems
             render={(page) => (
               <IconButton variant={{ base: "ghost", _selected: "outline" }}>
                 {page.value}
               </IconButton>
             )}
           />
-           <Pagination.NextTrigger asChild>
+          <Pagination.NextTrigger asChild>
             <IconButton>
               <LuChevronRight />
             </IconButton>
@@ -69,7 +61,6 @@ const ListBooksComponent = () => {
         </ButtonGroup>
       </PaginationRoot>
     </Stack>
-
   )
 }
 
