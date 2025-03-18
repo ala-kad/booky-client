@@ -2,7 +2,7 @@ import { useQuery } from "@apollo/client";
 // Components
 import EditBookComponent from "./Edit";
 import DeleteDialogComponent from "./Delete";
-import { Stack, Table, IconButton, ButtonGroup, Pagination } from "@chakra-ui/react";
+import { Table, IconButton, ButtonGroup, Pagination } from "@chakra-ui/react";
 import { PaginationItems, PaginationRoot } from "../ui/pagination";
 import { LuChevronLeft, LuChevronRight } from "react-icons/lu"
 // Queries & Mutations
@@ -14,8 +14,8 @@ const ListBooksComponent = () => {
   if (error) return <p>Error: {error.message}</p>;
 
   return (
-    <Stack width="full" gap="5">
-      <Table.Root interactive colorPalette='blue' variant='outline' size='sm' showColumnBorder={true}>
+    <>
+      <Table.Root interactive variant='outline' size='sm' showColumnBorder={true}>
         <Table.Header>
           <Table.Row>
             <Table.ColumnHeader>Name</Table.ColumnHeader>
@@ -39,7 +39,7 @@ const ListBooksComponent = () => {
         </Table.Body>
       </Table.Root>
       {/* Pagination component */}
-      <PaginationRoot count={data.books.length} pageSize={3} defaultPage={1}>
+      <PaginationRoot count={data.books.length} pageSize={3} defaultPage={1} my="2">
         <ButtonGroup variant="ghost" size="sm" wrap="wrap">
           <Pagination.PrevTrigger asChild>
             <IconButton>
@@ -60,7 +60,7 @@ const ListBooksComponent = () => {
           </Pagination.NextTrigger>
         </ButtonGroup>
       </PaginationRoot>
-    </Stack>
+    </>
   )
 }
 
