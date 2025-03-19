@@ -2,6 +2,8 @@
 import { useMutation } from "@apollo/client";
 import { useState } from "react";
 // Components
+import AlerSuccessComponent from './AlertSucess';
+import AlerErrorComponent from './AlertError';
 import { Button, Dialog, Portal } from "@chakra-ui/react";
 import { RiDeleteBinFill } from "react-icons/ri";
 // Utils
@@ -9,25 +11,32 @@ import { DELETE_MUTATION } from '../../utils/Mutations'
 
 const DeleteDialogComponent = ({ bookId, refetch }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+  
   // Delete Book Mutation
-  const [deleteBook, { loading }] = useMutation(DELETE_MUTATION, {
+  const [deleteBook, { data, loading, error }] = useMutation(DELETE_MUTATION, {
     onCompleted: () => {
+      setShowAlert(true);
       refetch();
-      alert('Book successfully deleted');
+      setTimeout(() => {
+        closeDialog();
+      }, 5000);
     },
-    onError: (error) => {
-      alert('Error deleting book', error.message);
+    onError: () => {
+      setShowAlert(true);
     }
   });
-
-  const closeDialog = () => setIsOpen(false);
+  
   // Delete a book function
-  const handleDelete = () => {
-    deleteBook({ variables: { id: bookId } });
+  const handleDelete = async(event) => {
+    event.preventDefault();
+    await deleteBook({ variables: { id: bookId } });
   };
 
+  const closeDialog = () => setIsOpen(false);
+
   return (
-    <Dialog.Root isOpen={isOpen} onClose={closeDialog} role="alertdialog" placement="center" trapFocus={false}>
+    <Dialog.Root isOpen={isOpen}  role="alertdialog" placement="center" trapFocus={false}>
       <Dialog.Trigger asChild >
         <Button colorPalette='red' variant="outline">
           <RiDeleteBinFill /> Delete book
@@ -40,6 +49,14 @@ const DeleteDialogComponent = ({ bookId, refetch }) => {
             <Dialog.Header>
               <Dialog.Title>Are you sure?</Dialog.Title>
             </Dialog.Header>
+            {/* Success deletion */}
+            {showAlert && data && (
+              <AlerSuccessComponent showAlert={showAlert} setShowAlert={setShowAlert} />
+            )} 
+            {/* Deletion fails alert */}
+            {showAlert && error && (
+              <AlerErrorComponent showAlert={showAlert} setShowAlert={setShowAlert} />
+            )}
             <Dialog.Body>
               <p>
                 This action cannot be undone. This will permanently delete this
