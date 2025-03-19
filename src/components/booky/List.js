@@ -12,7 +12,7 @@ const ListBooksComponent = () => {
   const { data, loading, error, refetch } = useQuery(BOOKS_QUERY);
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
-
+  if (data.books.length==0) return <p>No books found</p>;
   return (
     <>
       <Table.Root interactive variant='outline' size='sm' showColumnBorder={true}>
