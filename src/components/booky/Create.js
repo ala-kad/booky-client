@@ -1,9 +1,11 @@
 // Hooks
 import React, { useState } from 'react';
+import { useMutation, useApolloClient } from "@apollo/client";
 // Components
+import AlerSuccessComponent from './AlertSucess';
+import AlerErrorComponent from './AlertError';
 import { Button, Dialog, Field, Input, Portal, HStack, Stack } from "@chakra-ui/react";
 import { RiAddFill } from "react-icons/ri";
-import { useMutation, useApolloClient } from "@apollo/client";
 // Utils
 import { BOOKS_QUERY } from '../../utils/Queries';
 import { CREATE_BOOK_MUTATION } from '../../utils/Mutations';
@@ -11,9 +13,10 @@ import { CREATE_BOOK_MUTATION } from '../../utils/Mutations';
 const CreateBookComponent = () => {
   const [inputs, setInputs] = useState({});
   const client = useApolloClient();
+  const [showAlert, setShowAlert] = useState(false);
   
   // Create Book Mutation
-  const [createBook, { loading }] = useMutation(CREATE_BOOK_MUTATION, {
+  const [createBook, { data, loading, error }] = useMutation(CREATE_BOOK_MUTATION, {
     update(cache, { data: { createBook } }) {
       try {
         const existingBooks = cache.readQuery({ query: BOOKS_QUERY });
@@ -37,7 +40,7 @@ const CreateBookComponent = () => {
   }
 
   // Handles form submit event
-  const handleSubmit = async (event) => {
+  const handleSubmit = async(event) => {
     event.preventDefault();
     try {
       await createBook({
@@ -48,15 +51,15 @@ const CreateBookComponent = () => {
           }
         },
         onCompleted: () => {
-          alert('Success')
+          setShowAlert(true);
         },
         onError: (err) => {
-          alert(err.message);
+          setShowAlert(true);
         }
       });
       await client.refetchQueries({ include: ["BOOKS_QUERY"] });
     } catch (err) {
-      alert("Error creating book:", err);
+      setShowAlert(true);
     }
   };
 
@@ -76,11 +79,19 @@ const CreateBookComponent = () => {
         <Portal>
           <Dialog.Backdrop />
           <Dialog.Positioner>
-            <Dialog.Content>
+            <Dialog.Content position="relative">
+              {/* Alert Update Success */}
+              { showAlert && data && (
+                <AlerSuccessComponent showAlert={showAlert} setShowAlert={setShowAlert}/>
+              )}
+              {/* Alert Update Error */}
+              { showAlert && error && (
+                <AlerErrorComponent  showAlert={showAlert} setShowAlert={setShowAlert}/>
+              )} 
               <Dialog.Header>
                 <Dialog.Title>Create a new book</Dialog.Title>
               </Dialog.Header>
-              <Dialog.Body pb="4">
+              <Dialog.Body pb="4" >
                 <form onSubmit={handleSubmit}>
                   <Stack gap="4">
                     <Field.Root>
