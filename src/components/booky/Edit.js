@@ -16,8 +16,8 @@ const EditBookComponent = ({ book }) => {
     name: '',
     description: ''
   });
-  const [showAlert, setShowAlert] = useState(false);
 
+  const [showAlert, setShowAlert] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
   // Query Book Details
@@ -74,7 +74,7 @@ const EditBookComponent = ({ book }) => {
       });
       setShowAlert(true); // Show success alert
     } catch (err) {
-      console.log("Error updating book:", err);
+      setShowAlert(true); // Show error alert
     }
   };
 
@@ -89,7 +89,6 @@ const EditBookComponent = ({ book }) => {
   };
 
   const handleOpen = () => {
-    setIsOpen(true);
     fetchBookDetails({ variables: { id: book.id } });
   };
 
@@ -102,7 +101,7 @@ const EditBookComponent = ({ book }) => {
 
   return (
     <>
-      <Dialog.Root placement='center' open={isOpen} onOpenChange={handleOpen}>
+      <Dialog.Root placement='center' onOpenChange={handleOpen}>
         <Dialog.Trigger asChild>
           <Button variant="outline">
             <RiEditFill /> Edit Book
