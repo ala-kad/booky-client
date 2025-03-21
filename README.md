@@ -18,6 +18,12 @@ Use `yarn` to install the project dependencies:
 yarn install
 ```
 
+Then use `npm` 
+
+```bash
+npm install
+```
+
 ## Configuration
 
 ### Create an API
@@ -50,6 +56,12 @@ To do this, first copy `src/auth_config.json.example` into a new file in the sam
 
 This compiles and serves the React app and starts the backend API server on port 3001.
 
+`npm`
+```bash
+npm start
+```
+
+`yarn`
 ```bash
 yarn run dev
 ```
@@ -58,6 +70,12 @@ yarn run dev
 
 ### Compiles and minifies for production
 
+`npm`
+```bash
+npm run build
+```
+
+`yarn`
 ```bash
 yarn run build
 ```
