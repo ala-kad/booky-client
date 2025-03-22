@@ -11,18 +11,20 @@ This sample demonstrates the following use cases:
 - [Calling APIs](https://github.com/auth0-samples/auth0-react-samples/blob/master/Sample-01/src/views/ExternalApi.js)
 
 ## Project setup
+Use `npm` to install the project dependencies:
 
-Use `yarn` to install the project dependencies:
+```bash
+npm install
+```
+
+`yarn` 
 
 ```bash
 yarn install
 ```
 
-Then use `npm` 
+ `npm` 
 
-```bash
-npm install
-```
 
 ## Configuration
 
