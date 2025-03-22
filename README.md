@@ -9,6 +9,7 @@ This sample demonstrates the following use cases:
 - [Showing the user profile](https://github.com/auth0-samples/auth0-react-samples/blob/master/Sample-01/src/views/Profile.js)
 - [Protecting routes](https://github.com/auth0-samples/auth0-react-samples/blob/master/Sample-01/src/views/Profile.js#L33)
 - [Calling APIs](https://github.com/auth0-samples/auth0-react-samples/blob/master/Sample-01/src/views/ExternalApi.js)
+- [Manging Books]
 
 ## Project setup
 Use `npm` to install the project dependencies:
@@ -22,9 +23,6 @@ npm install
 ```bash
 yarn install
 ```
-
- `npm` 
-
 
 ## Configuration
 
