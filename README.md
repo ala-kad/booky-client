@@ -1,3 +1,7 @@
+
+
+https://github.com/user-attachments/assets/56859349-fa0c-4056-8f00-80136b2613c5
+
 # Booky React SDK  Application (Auth0)
 
 This sample demonstrates the integration of [Auth0 React SDK](https://github.com/auth0/auth0-react) into a React application created using [create-react-app](https://reactjs.org/docs/create-a-new-react-app.html). The sample is a companion to the [Auth0 React SDK Quickstart](https://auth0.com/docs/quickstart/spa/react).
